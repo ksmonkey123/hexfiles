@@ -1,5 +1,6 @@
 package ch.awae.binfiles;
 
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -81,6 +82,62 @@ public class BinaryFileTest {
             assertEquals(file.getByte(i), file2.getByte(i), "files must be identical at position " + i);
         }
 
+    }
+
+    @Test
+    public void testEmptyFragmentExtraction() {
+        BinaryFile file = new BinaryFile();
+
+        List<@NotNull DataFragment> fragments = file.getFragments(32, 64);
+        assertNotNull(fragments);
+        assertEquals(0, fragments.size());
+    }
+
+    @Test
+    public void testDenseFragmentExtraction() {
+        DataFragment fragment1 = new DataFragment(100, new byte[]{12, 13, 14, 15});
+        DataFragment fragment2 = new DataFragment(104, new byte[]{22, 23, 24, 25});
+
+        BinaryFile file = new BinaryFile(List.of(fragment1, fragment2));
+
+        List<@NotNull DataFragment> fragments = file.getFragments(102, 4);
+        assertNotNull(fragments);
+        assertEquals(1, fragments.size());
+
+        DataFragment fragment = fragments.getFirst();
+        assertEquals(102, fragment.getPosition());
+        byte[] data = fragment.getData();
+        assertEquals(4, data.length);
+
+        assertEquals(14, data[0]);
+        assertEquals(15, data[1]);
+        assertEquals(22, data[2]);
+        assertEquals(23, data[3]);
+    }
+
+    @Test
+    public void testSparseFragmentExtraction() {
+        DataFragment fragment1 = new DataFragment(100, new byte[]{12, 13, 14, 15});
+        DataFragment fragment2 = new DataFragment(105, new byte[]{23, 24, 25});
+
+        BinaryFile file = new BinaryFile(List.of(fragment1, fragment2));
+
+        List<@NotNull DataFragment> fragments = file.getFragments(102, 4);
+        assertNotNull(fragments);
+        assertEquals(2, fragments.size());
+
+        DataFragment f1 = fragments.getFirst();
+        assertEquals(102, f1.getPosition());
+        byte[] d1 = f1.getData();
+        assertEquals(2, d1.length);
+        assertEquals(14, d1[0]);
+        assertEquals(15, d1[1]);
+
+        DataFragment f2 = fragments.get(1);
+        assertEquals(105, f2.getPosition());
+        byte[] d2 = f2.getData();
+        assertEquals(1, d2.length);
+        assertEquals(23, d2[0]);
     }
 
 }
