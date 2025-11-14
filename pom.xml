@@ -76,26 +76,18 @@
                     <source>21</source>
                     <encoding>UTF-8</encoding>
                     <show>public</show>
-                    <doclint>all</doclint>
+                    <doclint>all,-missing</doclint>
+                    <additionalOptions>
+                        <additionalOption>-tag "apiNote:a:API Note:"</additionalOption>
+                        <additionalOption>-tag "implSpec:a:Implementation Requirements:"</additionalOption>
+                        <additionalOption>-tag "implNote:a:Implementation Note:"</additionalOption>
+                    </additionalOptions>
+
                 </configuration>
                 <executions>
                     <execution>
                         <goals>
                             <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-gpg-plugin</artifactId>
-                <version>3.2.8</version>
-                <executions>
-                    <execution>
-                        <id>sign-artifacts</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>sign</goal>
                         </goals>
                     </execution>
                 </executions>
@@ -119,12 +111,25 @@
             </plugin>
         </plugins>
     </build>
-
     <profiles>
         <profile>
             <id>central</id>
             <build>
                 <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>3.2.8</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
                     <plugin>
                         <groupId>org.sonatype.central</groupId>
                         <artifactId>central-publishing-maven-plugin</artifactId>
