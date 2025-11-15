@@ -61,6 +61,15 @@ public class DataFragment {
         return Arrays.copyOf(data, data.length);
     }
 
+    /**
+     * Returns the length of this data fragment.
+     *
+     * @return the length
+     */
+    public int getLength() {
+        return data.length;
+    }
+
     @Override
     public String toString() {
         return ("DataFragment(position=%d, length=%d)".formatted(this.position, this.data.length));
