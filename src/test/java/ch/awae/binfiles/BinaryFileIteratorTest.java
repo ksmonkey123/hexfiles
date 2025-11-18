@@ -4,9 +4,10 @@ import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class BinaryFileIteratorTest {
 
@@ -53,6 +54,24 @@ public class BinaryFileIteratorTest {
         // fill "block 4" at end only
         file.addByte(255, (byte) 1);
         return file;
+    }
+
+    @Test
+    public void testIteratorOverspansFile() {
+        BinaryFile file = new BinaryFile(16);
+
+        for (int i = 0; i < 16; i++) {
+            file.addByte(i, (byte) i);
+        }
+
+        Iterator<DataFragment> iter = file.iterator(64);
+
+        assertTrue(iter.hasNext());
+        DataFragment fragment = iter.next();
+
+        assertNotNull(fragment);
+        assertEquals(0, fragment.getPosition());
+        assertArrayEquals(new byte[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15}, fragment.getData());
     }
 
 }

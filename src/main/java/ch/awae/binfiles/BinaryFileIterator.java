@@ -45,7 +45,7 @@ class BinaryFileIterator implements Iterator<DataFragment> {
         while (queue.isEmpty() && nextStart < file.getCurrentSize()) {
             // cap size so we don't run over the end of the file.
             int size = Math.min(stepSize, file.getSizeLimit() - nextStart);
-            List<@NotNull DataFragment> fragments = file.getFragments(nextStart, stepSize);
+            List<@NotNull DataFragment> fragments = file.getFragments(nextStart, size);
             queue.addAll(fragments);
             nextStart = nextStart + stepSize;
         }
